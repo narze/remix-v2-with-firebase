@@ -1,3 +1,5 @@
+(src: https://github.com/remix-run/examples/tree/main/firebase)
+
 # Firebase
 
 This project demonstrates how to use Firebase with Remix.
