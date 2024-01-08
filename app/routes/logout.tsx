@@ -1,15 +1,15 @@
-import type { ActionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import type { ActionFunctionArgs } from "@remix-run/node"
+import { redirect } from "@remix-run/node"
+import { Form } from "@remix-run/react"
 
-import { destroySession, getSession } from "~/sessions";
+import { destroySession, getSession } from "~/sessions"
 
-export const action = async ({ request }: ActionArgs) => {
-  const session = await getSession(request.headers.get("Cookie"));
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const session = await getSession(request.headers.get("Cookie"))
   return redirect("/", {
     headers: { "Set-Cookie": await destroySession(session) },
-  });
-};
+  })
+}
 
 export default function Logout() {
   return (
@@ -20,5 +20,5 @@ export default function Logout() {
         <button type="submit">Logout</button>
       </Form>
     </div>
-  );
+  )
 }

@@ -1,56 +1,56 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node"
+import { json, redirect } from "@remix-run/node"
 import {
   Form,
   Link,
   useActionData,
   useFetcher,
   useLoaderData,
-} from "@remix-run/react";
-import type { FunctionComponent } from "react";
-import { useEffect, useRef } from "react";
+} from "@remix-run/react"
+import type { FunctionComponent } from "react"
+import { useEffect, useRef } from "react"
 
-import { requireAuth } from "~/server/auth.server";
-import { addTodo, getUserTodos, removeTodo } from "~/server/db.server";
+import { requireAuth } from "~/server/auth.server"
+import { addTodo, getUserTodos, removeTodo } from "~/server/db.server"
 
-export const loader = async ({ request }: LoaderArgs) => {
-  const user = await requireAuth(request);
-  const todos = await getUserTodos(user.uid);
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await requireAuth(request)
+  const todos = await getUserTodos(user.uid)
   return json({
     message: `Hello ${user.displayName || "unknown"}!`,
     todos,
-  });
-};
+  })
+}
 
-export const action = async ({ request }: ActionArgs) => {
-  const { uid } = await requireAuth(request);
-  const form = await request.formData();
-  const intent = form.get("intent");
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const { uid } = await requireAuth(request)
+  const form = await request.formData()
+  const intent = form.get("intent")
   if (intent === "create") {
-    const title = form.get("title");
+    const title = form.get("title")
     if (typeof title !== "string" || title.length === 0) {
-      return json({ error: "title is required" }, { status: 400 });
+      return json({ error: "title is required" }, { status: 400 })
     }
 
-    await addTodo(uid, title);
-    return redirect("/");
+    await addTodo(uid, title)
+    return redirect("/")
   }
   if (intent === "delete") {
-    const id = form.get("id");
+    const id = form.get("id")
     if (typeof id !== "string") {
-      return json({ error: "id is required" }, { status: 400 });
+      return json({ error: "id is required" }, { status: 400 })
     }
-    await removeTodo(uid, id);
-    return redirect("/");
+    await removeTodo(uid, id)
+    return redirect("/")
   }
-  return json({ error: "unknown method" }, { status: 400 });
-};
+  return json({ error: "unknown method" }, { status: 400 })
+}
 
 const TodoComponent: FunctionComponent<{ id: string; title: string }> = ({
   id,
   title,
 }) => {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher()
   return (
     <li>
       <fetcher.Form method="post">
@@ -61,16 +61,16 @@ const TodoComponent: FunctionComponent<{ id: string; title: string }> = ({
         </button>
       </fetcher.Form>
     </li>
-  );
-};
+  )
+}
 
 export default function Index() {
-  const actionData = useActionData<typeof action>();
-  const data = useLoaderData<typeof loader>();
-  const ref = useRef<HTMLInputElement>(null);
+  const actionData = useActionData<typeof action>()
+  const data = useLoaderData<typeof loader>()
+  const ref = useRef<HTMLInputElement>(null)
   useEffect(() => {
-    ref.current?.focus();
-  }, [ref]);
+    ref.current?.focus()
+  }, [ref])
   return (
     <div>
       <h1>{data.message}</h1>
@@ -93,5 +93,5 @@ export default function Index() {
         ))}
       </ul>
     </div>
-  );
+  )
 }
